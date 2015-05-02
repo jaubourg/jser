@@ -4,9 +4,9 @@ node_js:
   - "0.11"
   - "0.10"
   - "iojs"
+before_install:
+  - npm install -g npm
 before_script:
-  - npm install -g npm@2
-  - npm --version
   - npm install -g grunt-cli
 after_script:
   - grunt coverage
