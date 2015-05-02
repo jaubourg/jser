@@ -12,10 +12,10 @@ module.exports = {
 			"hello": "world"
 		};
 		var output = JSON.parse( serializer.request( object ) );
-		__.deepEqual( output, {
-			data: object,
-			objects: []
-		}, "no special treatment" );
+		__.deepEqual( output, [
+			[],
+			object
+		], "no special treatment" );
 		__.done();
 	},
 	"registered class": function( __ ) {
@@ -33,14 +33,14 @@ module.exports = {
 		} );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			var output = JSON.parse( serializer.request( object ) );
-			__.deepEqual( output, {
-				data: "@@jser@@0",
-				objects: [ {
+			__.deepEqual( output, [
+				[ {
 					"@@jser@@": "MyClass",
 					string: "hello world",
 					boolean: 12
-				} ]
-			}, "single object properly serialized" );
+				} ],
+				"@@jser@@0"
+			], "single object properly serialized" );
 		} ).always( function() {
 			__.done();
 		} );
@@ -64,9 +64,8 @@ module.exports = {
 		).success( function( object, child ) {
 			object.boolean = [ "a", child ];
 			var output = JSON.parse( serializer.request( object ) );
-			__.deepEqual( output, {
-				data: "@@jser@@0",
-				objects: [ {
+			__.deepEqual( output, [
+				[ {
 					"@@jser@@": "MyClass",
 					string: "hello world",
 					boolean: [ "a", "@@jser@@1" ]
@@ -74,8 +73,9 @@ module.exports = {
 					"@@jser@@": "MyClass",
 					string: "bad world",
 					boolean: false
-				} ]
-			}, "object within an object properly serialized" );
+				} ],
+				"@@jser@@0"
+			], "object within an object properly serialized" );
 		} ).always( function() {
 			__.done();
 		} );
@@ -96,14 +96,14 @@ module.exports = {
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 				object.boolean = [ "a", object ];
 				var output = JSON.parse( serializer.request( object ) );
-				__.deepEqual( output, {
-					data: "@@jser@@0",
-					objects: [ {
+				__.deepEqual( output, [
+					[ {
 						"@@jser@@": "MyClass",
 						string: "hello world",
 						boolean: [ "a", "@@jser@@0" ]
-					} ]
-				}, "recursive structures properly serialized" );
+					} ],
+					"@@jser@@0"
+				], "recursive structures properly serialized" );
 			} ).always( function() {
 				__.done();
 			} );
