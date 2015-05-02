@@ -34,11 +34,13 @@ module.exports = {
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			var output = JSON.parse( serializer.request( object ) );
 			__.deepEqual( output, [
-				[ {
-					"@@jser@@": "MyClass",
-					string: "hello world",
-					boolean: 12
-				} ],
+				[ [
+					"MyClass",
+					{
+						string: "hello world",
+						boolean: 12
+					}
+				] ],
 				"@@jser@@0"
 			], "single object properly serialized" );
 		} ).always( function() {
@@ -65,15 +67,19 @@ module.exports = {
 			object.boolean = [ "a", child ];
 			var output = JSON.parse( serializer.request( object ) );
 			__.deepEqual( output, [
-				[ {
-					"@@jser@@": "MyClass",
-					string: "hello world",
-					boolean: [ "a", "@@jser@@1" ]
-				}, {
-					"@@jser@@": "MyClass",
-					string: "bad world",
-					boolean: false
-				} ],
+				[ [
+					"MyClass",
+					{
+						string: "hello world",
+						boolean: [ "a", "@@jser@@1" ]
+					}
+				], [
+					"MyClass",
+					{
+						string: "bad world",
+						boolean: false
+					}
+				] ],
 				"@@jser@@0"
 			], "object within an object properly serialized" );
 		} ).always( function() {
@@ -97,11 +103,13 @@ module.exports = {
 				object.boolean = [ "a", object ];
 				var output = JSON.parse( serializer.request( object ) );
 				__.deepEqual( output, [
-					[ {
-						"@@jser@@": "MyClass",
-						string: "hello world",
-						boolean: [ "a", "@@jser@@0" ]
-					} ],
+					[ [
+						"MyClass",
+						{
+							string: "hello world",
+							boolean: [ "a", "@@jser@@0" ]
+						}
+					] ],
 					"@@jser@@0"
 				], "recursive structures properly serialized" );
 			} ).always( function() {

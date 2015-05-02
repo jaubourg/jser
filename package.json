@@ -24,7 +24,8 @@
 		"wrench": "1.5.8"
 	},
 	"peerDependencies": {
-		"attempt-js": ">= 0.1.0"
+		"attempt-js": ">= 0.1.0",
+		"lodash": ">= 3.0.0"
 	},
 	"scripts": {
 		"test": "grunt"
