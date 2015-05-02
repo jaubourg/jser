@@ -7,7 +7,7 @@
 
 # jser
 
-a JSON-backed serializer support for nifty networking.
+a JSON-backed serializer for nifty networking.
 
 ## License
 
