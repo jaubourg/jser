@@ -4,10 +4,25 @@ var Attempt = require( "attempt-js" );
 
 var jser = require( "../lib/jser" );
 
+function getMyClass( name ) {
+	if ( name !== "MyClass" ) {
+		throw "unknown class " + name;
+	}
+	return {
+		init: function( preString, flag ) {
+			this.string = preString + " world";
+			this.num = 666;
+			this.boolean = flag || false;
+		},
+		proto: {},
+		export: [ "boolean", "string" ]
+	};
+}
+
 module.exports = {
 	"no registered class": function( __ ) {
 		__.expect( 1 );
-		var serializer = jser();
+		var serializer = jser( getMyClass );
 		var object = {
 			"hello": "world"
 		};
@@ -19,17 +34,7 @@ module.exports = {
 	},
 	"registered class": function( __ ) {
 		__.expect( 1 );
-		var serializer = jser();
-		serializer.register( {
-			name: "MyClass",
-			init: function( preString, flag ) {
-				this.string = preString + " world";
-				this.num = 666;
-				this.boolean = flag || false;
-			},
-			proto: {},
-			export: [ "boolean", "string" ]
-		} );
+		var serializer = jser( getMyClass );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			var output = JSON.parse( serializer.request( object ) );
 			__.deepEqual( output, [
@@ -49,17 +54,7 @@ module.exports = {
 	},
 	"object within an object": function( __ ) {
 		__.expect( 1 );
-		var serializer = jser();
-		serializer.register( {
-			name: "MyClass",
-			init: function( preString, flag ) {
-				this.string = preString + " world";
-				this.num = 666;
-				this.boolean = flag || false;
-			},
-			proto: {},
-			export: [ "boolean", "string" ]
-		} );
+		var serializer = jser( getMyClass );
 		Attempt.join(
 			serializer.newInstance( "MyClass", "hello", 12 ),
 			serializer.newInstance( "MyClass", "bad" )
@@ -89,17 +84,7 @@ module.exports = {
 	},
 	"recursive structure":  function( __ ) {
 		__.expect( 1 );
-		var serializer = jser();
-		serializer.register( {
-			name: "MyClass",
-			init: function( preString, flag ) {
-				this.string = preString + " world";
-				this.num = 666;
-				this.boolean = flag || false;
-			},
-			proto: {},
-			export: [ "boolean", "string" ]
-		} );
+		var serializer = jser( getMyClass );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 				object.boolean = [ "a", object ];
 				var output = JSON.parse( serializer.request( object ) );
