@@ -29,6 +29,18 @@ module.exports = {
 		], "no special treatment" );
 		__.done();
 	},
+	"exception are propagated": function( __ ) {
+		__.expect( 1 );
+		function ErrorThrower() {}
+		ErrorThrower.prototype.toJSON = function() {
+			throw "PROPAGATED";
+		};
+		var serializer = jser( getMyClass );
+		__.throws( function() {
+			serializer.request( new ErrorThrower() );
+		}, /^PROPAGATED$/, "exception was propagated" );
+		__.done();
+	},
 	"registered class": function( __ ) {
 		__.expect( 1 );
 		var serializer = jser( getMyClass );
