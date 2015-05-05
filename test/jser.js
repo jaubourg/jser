@@ -13,7 +13,6 @@ module.exports = {
 		};
 		var output = JSON.parse( serializer.request( object ) );
 		__.deepEqual( output, [
-			0,
 			object
 		], "no special treatment" );
 		__.done();
@@ -34,7 +33,6 @@ module.exports = {
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			var output = JSON.parse( serializer.request( object ) );
 			__.deepEqual( output, [
-				2,
 				12,
 				[
 					"MyClass",
@@ -69,7 +67,6 @@ module.exports = {
 			object.boolean = [ "a", child ];
 			var output = JSON.parse( serializer.request( object ) );
 			__.deepEqual( output, [
-				2,
 				[
 					"MyClass",
 					{
@@ -107,7 +104,6 @@ module.exports = {
 				object.boolean = [ "a", object ];
 				var output = JSON.parse( serializer.request( object ) );
 				__.deepEqual( output, [
-					1,
 					[
 						"MyClass",
 						{
