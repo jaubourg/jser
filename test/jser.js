@@ -1,6 +1,5 @@
 "use strict";
 
-var Attempt = require( "attempt-js" );
 var createDefinitionsGetter = require( "./util/createDefinitionsGetter" );
 
 var jser = require( "../lib/jser" );
@@ -53,31 +52,30 @@ module.exports = {
 	"object within an object": function( __ ) {
 		__.expect( 1 );
 		var serializer = jser( getMyClass );
-		Attempt.join(
-			serializer.newInstance( "MyClass", "hello", 12 ),
-			serializer.newInstance( "MyClass", "bad" )
-		).success( function( object, child ) {
-			object.boolean = [ "a", child ];
-			var output = JSON.parse( serializer.request( object ).getBody() );
-			__.deepEqual( output, [
-				[
-					"MyClass",
-					{
-						string: "bad world",
-						boolean: false
-					}
-				],
-				[
-					"MyClass",
-					{
-						string: "hello world",
-						boolean: [ "a", 1 ]
-					}
-				],
-				0
-			], "object within an object properly serialized" );
-		} ).always( function() {
-			__.done();
+		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
+			serializer.newInstance( "MyClass", "bad" ).success( function( child ) {
+				object.boolean = [ "a", child ];
+				var output = JSON.parse( serializer.request( object ).getBody() );
+				__.deepEqual( output, [
+					[
+						"MyClass",
+						{
+							string: "bad world",
+							boolean: false
+						}
+					],
+					[
+						"MyClass",
+						{
+							string: "hello world",
+							boolean: [ "a", 1 ]
+						}
+					],
+					0
+				], "object within an object properly serialized" );
+			} ).always( function() {
+				__.done();
+			} );
 		} );
 	},
 	"recursive structure":  function( __ ) {
