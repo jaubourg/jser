@@ -5,15 +5,15 @@ var Attempt = require( "attempt-js" );
 
 var rDelay = /<([0-9]+)>$/;
 
-module.exports = function( definitions ) {
-	var data = _.transform( definitions, function( result, definition, name ) {
+module.exports = function( descriptors ) {
+	var data = _.transform( descriptors, function( result, descriptor, name ) {
 		var delay = false;
 		name = name.replace( rDelay, function( _, delayString ) {
 			delay = 1 * delayString;
 			return "";
 		} );
 		result[ name ] = {
-			definition: definition,
+			descriptor: descriptor,
 			delay: delay
 		};
 	} );
@@ -28,8 +28,8 @@ module.exports = function( definitions ) {
 		info.requested = true;
 		return info.delay !== false ? Attempt( function( success ) {
 			setTimeout( function() {
-				success( info.definition );
+				success( info.descriptor );
 			}, info.delay );
-		} ) : info.definition;
+		} ) : info.descriptor;
 	};
 };

@@ -1,10 +1,10 @@
 "use strict";
 
-var createDefinitionsGetter = require( "./util/createDefinitionsGetter" );
+var createDescriptorsGetter = require( "./util/createDescriptorsGetter" );
 
 var JSER = require( "../lib/jser" );
 
-var singleClassDefinitions = {
+var singleClassDescriptors = {
 	MyClass: {
 		request: function( preString, flag ) {
 			return {
@@ -21,7 +21,7 @@ var singleClassDefinitions = {
 module.exports = {
 	"no registered class": function( __ ) {
 		__.expect( 1 );
-		var serializer = JSER( createDefinitionsGetter( singleClassDefinitions ) );
+		var serializer = JSER( createDescriptorsGetter( singleClassDescriptors ) );
 		var object = {
 			"hello": "world"
 		};
@@ -37,7 +37,7 @@ module.exports = {
 		ErrorThrower.prototype.toJSON = function() {
 			throw new Error( "PROPAGATED" );
 		};
-		var serializer = JSER( createDefinitionsGetter( singleClassDefinitions ) );
+		var serializer = JSER( createDescriptorsGetter( singleClassDescriptors ) );
 		__.throws( function() {
 			serializer.request( new ErrorThrower() );
 		}, /^PROPAGATED$/, "exception was propagated" );
@@ -45,7 +45,7 @@ module.exports = {
 	},
 	"registered class": function( __ ) {
 		__.expect( 1 );
-		var serializer = JSER( createDefinitionsGetter( singleClassDefinitions ) );
+		var serializer = JSER( createDescriptorsGetter( singleClassDescriptors ) );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			var output = JSON.parse( serializer.request( object ).getBody() );
 			__.deepEqual( output, [
@@ -65,7 +65,7 @@ module.exports = {
 	},
 	"object within an object": function( __ ) {
 		__.expect( 1 );
-		var serializer = JSER( createDefinitionsGetter( singleClassDefinitions ) );
+		var serializer = JSER( createDescriptorsGetter( singleClassDescriptors ) );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 			serializer.newInstance( "MyClass", "bad" ).success( function( child ) {
 				object.boolean = [ "a", child ];
@@ -94,7 +94,7 @@ module.exports = {
 	},
 	"recursive structure":  function( __ ) {
 		__.expect( 1 );
-		var serializer = JSER( createDefinitionsGetter( singleClassDefinitions ) );
+		var serializer = JSER( createDescriptorsGetter( singleClassDescriptors ) );
 		serializer.newInstance( "MyClass", "hello", 12 ).success( function( object ) {
 				object.boolean = [ "a", object ];
 				var output = JSON.parse( serializer.request( object ).getBody() );
