@@ -1,14 +1,35 @@
 "use strict";
 
+var _ = require( "lodash" );
+var Attempt = require( "attempt-js" );
+
+var rDelay = /<([0-9]+)>$/;
+
 module.exports = function( definitions ) {
-	var alreadyRequested = {};
+	var data = _.transform( definitions, function( result, definition, name ) {
+		var delay = false;
+		name = name.replace( rDelay, function( _, delayString ) {
+			delay = 1 * delayString;
+			return "";
+		} );
+		result[ name ] = {
+			definition: definition,
+			delay: delay
+		};
+	} );
 	return function( name ) {
-		if ( !definitions.hasOwnProperty( name ) ) {
-			throw "unknown class " + name;
+		if ( !data.hasOwnProperty( name ) ) {
+			throw new Error( "unknown class " + name );
 		}
-		if ( alreadyRequested.hasOwnProperty( name ) ) {
-			throw "class " + name + " was already requested earlier";
+		var info = data[ name ];
+		if ( info.requested ) {
+			throw new Error( "class " + name + " was already requested" );
 		}
-		return definitions[ name ];
+		info.requested = true;
+		return info.delay !== false ? Attempt( function( success ) {
+			setTimeout( function() {
+				success( info.definition );
+			}, info.delay );
+		} ) : info.definition;
 	};
 };
