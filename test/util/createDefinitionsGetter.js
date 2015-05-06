@@ -19,11 +19,11 @@ module.exports = function( definitions ) {
 	} );
 	return function( name ) {
 		if ( !data.hasOwnProperty( name ) ) {
-			throw new Error( "unknown class " + name );
+			return Attempt.createFailure( new Error( "unknown class " + name ) );
 		}
 		var info = data[ name ];
 		if ( info.requested ) {
-			throw new Error( "class " + name + " was already requested" );
+			return Attempt.createFailure( new Error( "class " + name + " was already requested" ) );
 		}
 		info.requested = true;
 		return info.delay !== false ? Attempt( function( success ) {

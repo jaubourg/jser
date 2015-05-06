@@ -6,10 +6,12 @@ var JSER = require( "../lib/jser" );
 
 var singleClassDefinitions = {
 	MyClass: {
-		init: function( preString, flag ) {
-			this.string = preString + " world";
-			this.num = 666;
-			this.boolean = flag || false;
+		request: function( preString, flag ) {
+			return {
+				string: preString + " world",
+				num: 666,
+				boolean: flag || false
+			};
 		},
 		proto: {},
 		export: [ "boolean", "string" ]
